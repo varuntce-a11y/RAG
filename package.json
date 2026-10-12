@@ -1,0 +1,13 @@
+{
+  "name": "paragraph-rag",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local-first document Q&A for text, Markdown, CSV, PDF, and Word files",
+  "dependencies": {
+    "mammoth": "1.13.0",
+    "pdfjs-dist": "6.4.299"
+  },
+  "overrides": {
+    "argparse": "2.0.1"
+  }
+}

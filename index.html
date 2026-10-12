@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f6f5f1">
+    <title>Paragraph RAG — Ask your documents</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css?v=2">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="./" aria-label="Paragraph RAG home">
+          <span class="brand-mark"><i></i><i></i><i></i></span>
+          <span>paragraph<span class="brand-light">rag</span></span>
+        </a>
+        <div class="workspace-label">WORKSPACE</div>
+        <button class="workspace-switch"><span class="workspace-avatar">P</span><span class="workspace-name">Personal space</span><span class="chevron">⌄</span></button>
+        <div class="sidebar-section">
+          <div class="sidebar-heading"><span>YOUR DOCUMENTS</span><span id="doc-count">0</span></div>
+          <div id="document-list" class="document-list">
+            <div class="empty-docs">Your library is ready<br>for its first document.</div>
+          </div>
+          <button class="sidebar-add" id="sidebar-add"><span>＋</span> Add a document</button>
+        </div>
+        <div class="sidebar-bottom">
+          <div class="privacy-card"><span class="privacy-icon">◈</span><div><strong>Your files stay yours.</strong><p>Everything is processed locally in your browser.</p></div></div>
+          <button class="profile-button"><span class="profile-avatar">V</span><span><strong>Varun</strong><small>Free workspace</small></span><span class="profile-menu">···</span></button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div class="breadcrumb"><span>Workspace</span><span class="crumb-slash">/</span><strong id="topbar-document">New conversation</strong></div>
+          <div class="topbar-right"><span class="local-indicator"><span></span> Local &amp; private</span><button class="icon-button help-button" title="About Paragraph RAG">?</button></div>
+        </header>
+
+        <div class="workspace-grid">
+          <section class="chat-panel" aria-label="Document chat">
+            <div class="chat-inner">
+              <div class="conversation-heading"><div class="eyebrow"><span class="eyebrow-line"></span> YOUR DOCUMENT WORKSPACE</div><h1>Good questions<br>start <em>somewhere.</em></h1><p class="heading-subtitle">Bring a document. Leave with the details that matter.</p></div>
+              <div id="conversation" class="conversation">
+                <div id="welcome-card" class="welcome-card">
+                  <div class="welcome-art" aria-hidden="true"><div class="art-page"><span></span><span></span><span></span><span></span><b></b></div><div class="art-spark">✳</div><div class="art-dot"></div></div>
+                  <div class="welcome-copy"><div class="welcome-kicker">A little less searching</div><h2>Your docs are full<br>of good answers.</h2><p>Upload a file to get started. Paragraph RAG finds the right passage and shows you exactly where it came from.</p><button class="primary-button" id="welcome-upload"><span>＋</span> Upload your first document</button><button class="demo-button" id="load-demo">or explore with a sample document <span>↗</span></button></div>
+                </div>
+              </div>
+              <div id="composer" class="composer-wrap">
+                <div class="composer">
+                  <textarea id="question-input" rows="1" placeholder="Upload a document to start asking questions…" disabled aria-label="Ask a question"></textarea>
+                  <div class="composer-bottom"><span id="composer-hint">Answers are grounded in your documents</span><button id="send-question" class="send-button" aria-label="Send question" disabled>↑</button></div>
+                </div>
+                <div class="composer-footnote"><span>Paragraph RAG can make mistakes.</span> Check the source to be sure.</div>
+              </div>
+            </div>
+          </section>
+
+          <aside class="inspector" aria-label="Document settings and source viewer">
+            <div class="inspector-header"><div class="inspector-title">Document setup</div><button class="icon-button panel-more" aria-label="More options">···</button></div>
+            <div class="inspector-content">
+              <section class="setup-card">
+                <div class="section-label">01 <span>ADD A DOCUMENT</span></div>
+                <label for="file-input" id="drop-zone" class="drop-zone">
+                  <span class="upload-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14.5v3A2.5 2.5 0 007.5 20h9a2.5 2.5 0 002.5-2.5v-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="drop-copy"><strong>Choose a file <span>or drop it here</span></strong><small>Markdown, CSV, text, PDF, or Word · up to 25 MB</small></span>
+                </label>
+                <input id="file-input" type="file" accept=".md,.markdown,.csv,.txt,.pdf,.docx,text/markdown,text/csv,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+                <div id="file-status" class="file-status"><span class="status-dot"></span><span id="file-status-text">Waiting for a document</span></div>
+              </section>
+
+              <section id="chunk-section" class="settings-section">
+                <div class="section-label">02 <span>CHUNK SETTINGS</span></div>
+                <div class="chunk-controls">
+                  <label class="control-label" for="chunk-size">Chunk size <span id="chunk-size-value">800</span></label>
+                  <input id="chunk-size" type="range" min="200" max="2000" step="100" value="800">
+                  <div class="range-ends"><span>200 chars</span><span>2,000 chars</span></div>
+                  <label class="control-label overlap-label" for="chunk-overlap">Overlap <span id="chunk-overlap-value">100</span></label>
+                  <input id="chunk-overlap" type="range" min="0" max="400" step="25" value="100">
+                  <div class="range-ends"><span>None</span><span>400 chars</span></div>
+                </div>
+                <div class="chunk-summary"><span class="summary-icon">⌘</span><span id="chunk-summary-text">Add a document to preview chunks</span></div>
+                <div id="chunk-preview" class="chunk-preview"><div class="preview-placeholder"><span>▤</span> Chunk previews will appear here</div></div>
+                <button id="index-button" class="index-button" disabled><span>✳</span> Index document</button>
+              </section>
+
+              <section class="search-section">
+                <div class="section-label">03 <span>RETRIEVAL METHOD</span></div>
+                <div class="retrieval-options" role="group" aria-label="Retrieval method">
+                  <button class="retrieval-option" data-method="vector"><span class="method-icon">⌘</span><span><strong>Vector</strong><small>TF-IDF similarity</small></span><span class="radio"></span></button>
+                  <button class="retrieval-option" data-method="keyword"><span class="method-icon keyword-icon">⌕</span><span><strong>Keyword</strong><small>Exact terms · BM25</small></span><span class="radio"></span></button>
+                  <button class="retrieval-option selected" data-method="hybrid"><span class="method-icon hybrid-icon">◉</span><span><strong>Hybrid</strong><small>Best of both</small></span><span class="radio"></span></button>
+                </div>
+              </section>
+
+              <section id="source-section" class="source-section">
+                <div class="source-header"><div class="section-label">SOURCE VIEWER</div><span id="source-label" class="source-label">NO SOURCE SELECTED</span></div>
+                <div id="source-viewer" class="source-viewer"><div class="source-empty"><span>↗</span><p>Citations open their source<br>passage here.</p></div></div>
+              </section>
+            </div>
+            <div class="inspector-footer"><span class="footer-mark">✳</span> Made for the curious <span>·</span> <span class="footer-version">Paragraph RAG</span></div>
+          </aside>
+        </div>
+      </main>
+    </div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="./rag-core.js?v=3"></script>
+    <script src="./app.js?v=3"></script>
+  </body>
+</html>
